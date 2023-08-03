@@ -1,0 +1,20 @@
+{
+  "name": "sensehat-node-ipc",
+  "version": "1.0.0",
+  "description": "A Node.js package to read sensor data from the Raspberry Pi Sense HAT through IPC.",
+  "main": "src/index.js",
+  "scripts": {
+    "postinstall": "python3 -m venv venv && . venv/bin/activate && pip install -r requirements.txt",
+    "start": "node src/index.js",
+    "test": "jest"
+  },
+  "author": "Marco Christiani",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "protobufjs": "^7.2.4",
+    "zeromq": "^6.0.0-beta.17"
+  },
+  "devDependencies": {
+    "jest": "^29.6.2"
+  }
+}
