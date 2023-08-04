@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0esensehat.proto\"\xf6\x01\n\nSensorData\x12\x13\n\x0btemperature\x18\x01 \x01(\x02\x12\x10\n\x08humidity\x18\x02 \x01(\x02\x12\x10\n\x08pressure\x18\x03 \x01(\x02\x12\x15\n\rmagnetometerX\x18\x04 \x01(\x02\x12\x15\n\rmagnetometerY\x18\x05 \x01(\x02\x12\x15\n\rmagnetometerZ\x18\x06 \x01(\x02\x12\x10\n\x08rollDegX\x18\x07 \x01(\x02\x12\x11\n\tpitchDegX\x18\x08 \x01(\x02\x12\x0f\n\x07yawDegX\x18\t \x01(\x02\x12\x10\n\x08gyroDegX\x18\n \x01(\x02\x12\x10\n\x08gyroDegY\x18\x0b \x01(\x02\x12\x10\n\x08gyroDegZ\x18\x0c \x01(\x02\x62\x06proto3'
+  serialized_pb=b'\n\x0esensehat.proto\"\x8b\x02\n\nSensorData\x12\x13\n\x0btemperature\x18\x01 \x01(\x02\x12\x10\n\x08humidity\x18\x02 \x01(\x02\x12\x10\n\x08pressure\x18\x03 \x01(\x02\x12\x15\n\rmagnetometerX\x18\x04 \x01(\x02\x12\x15\n\rmagnetometerY\x18\x05 \x01(\x02\x12\x15\n\rmagnetometerZ\x18\x06 \x01(\x02\x12\x14\n\x0c\x61\x63\x63\x65lDegRoll\x18\x07 \x01(\x02\x12\x15\n\raccelDegPitch\x18\x08 \x01(\x02\x12\x13\n\x0b\x61\x63\x63\x65lDegYaw\x18\t \x01(\x02\x12\x13\n\x0bgyroDegRoll\x18\n \x01(\x02\x12\x14\n\x0cgyroDegPitch\x18\x0b \x01(\x02\x12\x12\n\ngyroDegYaw\x18\x0c \x01(\x02\x62\x06proto3'
 )
 
 
@@ -76,42 +76,42 @@ _SENSORDATA = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='rollDegX', full_name='SensorData.rollDegX', index=6,
+      name='accelDegRoll', full_name='SensorData.accelDegRoll', index=6,
       number=7, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='pitchDegX', full_name='SensorData.pitchDegX', index=7,
+      name='accelDegPitch', full_name='SensorData.accelDegPitch', index=7,
       number=8, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='yawDegX', full_name='SensorData.yawDegX', index=8,
+      name='accelDegYaw', full_name='SensorData.accelDegYaw', index=8,
       number=9, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='gyroDegX', full_name='SensorData.gyroDegX', index=9,
+      name='gyroDegRoll', full_name='SensorData.gyroDegRoll', index=9,
       number=10, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='gyroDegY', full_name='SensorData.gyroDegY', index=10,
+      name='gyroDegPitch', full_name='SensorData.gyroDegPitch', index=10,
       number=11, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
     _descriptor.FieldDescriptor(
-      name='gyroDegZ', full_name='SensorData.gyroDegZ', index=11,
+      name='gyroDegYaw', full_name='SensorData.gyroDegYaw', index=11,
       number=12, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
@@ -130,7 +130,7 @@ _SENSORDATA = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=19,
-  serialized_end=265,
+  serialized_end=286,
 )
 
 DESCRIPTOR.message_types_by_name['SensorData'] = _SENSORDATA

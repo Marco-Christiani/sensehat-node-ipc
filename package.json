@@ -4,7 +4,7 @@
   "description": "A Node.js package to read sensor data from the Raspberry Pi Sense HAT through IPC.",
   "main": "src/index.js",
   "scripts": {
-    "postinstall": "python3 -m venv venv && . venv/bin/activate && pip install -r requirements.txt",
+    "postinstall": "python3 -m venv venv --system-site-packages && . venv/bin/activate && pip install -r requirements.txt",
     "start": "node src/index.js",
     "test": "jest"
   },

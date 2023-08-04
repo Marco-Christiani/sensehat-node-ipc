@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+message SensorData {
+  float temperature = 1;
+  float humidity = 2;
+  float pressure = 3;
+
+  float magnetometerX = 4;
+  float magnetometerY = 5;
+  float magnetometerZ = 6;
+
+  float accelDegRoll= 7;
+  float accelDegPitch = 8;
+  float accelDegYaw = 9;
+
+  float gyroDegRoll = 10;
+  float gyroDegPitch = 11;
+  float gyroDegYaw = 12;
+}

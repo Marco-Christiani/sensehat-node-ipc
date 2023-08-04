@@ -3,32 +3,47 @@ const path = require('path');
 const zmq = require('zeromq');
 const protobuf = require('protobufjs');
 const fs = require('fs');
+const EventEmitter = require('events');
 
-protobuf.load(path.join(__dirname, '../proto/sensehat.proto'), function(err, root) {
-  if (err)
-    throw err;
-
-  let SensorData = root.lookupType("SensorData");
-
-
-  const pybin = path.join(__dirname, '../venv/bin/python');
-  const scriptpath = path.join(__dirname, 'sensehat.py');
-
-  if (!fs.existsSync(pybin)) {
-    console.error(`Python binary not found at path: ${pybin}`);
-  } else if (!fs.existsSync(scriptpath)) {
-    console.error(`Python script not found at path: ${scriptpath}`);
-  } else {
-    console.log('spawning!')
-    const pythonProcess = spawn(pybin, [scriptpath]);
+class SensorDataEmitter extends EventEmitter {
+  constructor() {
+    super();
+    this.sock = zmq.socket('sub');
+    this.sock.connect('tcp://127.0.0.1:5556');
+    this.sock.subscribe('data');
   }
-  console.log('spawned')
-  const sock = zmq.socket('sub');
-  sock.connect('tcp://127.0.0.1:5556');
-  sock.subscribe('data');
 
-  sock.on('message', (topic, data) => {
-    let msg = SensorData.decode(data);
-    console.log(`Temperature: ${msg.temperature}, Humidity: ${msg.humidity}, Pressure: ${msg.pressure}`);
-  });
+  start() {
+    protobuf.load(path.join(__dirname, '../proto/sensehat.proto')).then(root => {
+      const SensorData = root.lookupType("SensorData");
+
+      this.sock.on('message', (_topic, data) => {
+        const msg = SensorData.decode(data);
+        this.emit('data', msg);
+      });
+
+      const pybin = path.join(__dirname, '../venv/bin/python');
+      const scriptpath = path.join(__dirname, 'sensehat.py');
+
+      if (!fs.existsSync(pybin)) {
+        console.error(`Python binary not found at path: ${pybin}`);
+        return;
+      } else if (!fs.existsSync(scriptpath)) {
+        console.error(`Python script not found at path: ${scriptpath}`);
+        return;
+      }
+      spawn(pybin, [scriptpath]);
+    }).catch(err => {
+      console.error(err);
+    });
+  }
+}
+
+const sensorDataEmitter = new SensorDataEmitter();
+
+sensorDataEmitter.on('data', msg => {
+  console.log(`Temperature: ${msg.temperature}, Humidity: ${msg.humidity}, Pressure: ${msg.pressure}`);
 });
+
+sensorDataEmitter.start();
+console.log('started');
