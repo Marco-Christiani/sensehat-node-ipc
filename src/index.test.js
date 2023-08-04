@@ -10,7 +10,17 @@ test('Protobuf deserialization', async () => {
   const SensorData = root.lookupType('SensorData');
 
   // Create a test message
-  const testMessage = SensorData.create({ temperature: 25.0, humidity: 50.0, pressure: 1000.0 });
+  const testMessage = SensorData.create({
+    temperature: 25.0,
+    humidity: 50.0,
+    pressure: 1000.0,
+    magnetometerX: 12.0,
+    magnetometerY: 15.0,
+    magnetometerZ: 22.0,
+    gyroDegX: 45.0,
+    gyroDegY: 44.0,
+    gyroDegZ: 32.0,
+  });
 
   // Serialize the message
   const serializedMessage = SensorData.encode(testMessage).finish();
@@ -48,6 +58,12 @@ test('ZeroMQ and Protobuf communication', done => {
     expect(msg.temperature).toBeCloseTo(25.0);
     expect(msg.humidity).toBeCloseTo(50.0);
     expect(msg.pressure).toBeCloseTo(1000.0);
+    expect(msg.magnetometerX).toBeCloseTo(12.0);
+    expect(msg.magnetometerY).toBeCloseTo(15.0);
+    expect(msg.magnetometerZ).toBeCloseTo(22.0);
+    expect(msg.gyroDegX).toBeCloseTo(45.0);
+    expect(msg.gyroDegY).toBeCloseTo(44.0);
+    expect(msg.gyroDegZ).toBeCloseTo(32.0);
 
     // Close the sockets
     subscriber.close();
@@ -60,7 +76,17 @@ test('ZeroMQ and Protobuf communication', done => {
   // Give the subscriber a moment to connect before the publisher starts sending
   setTimeout(() => {
     // Create a test message
-    const testMessage = SensorData.create({ temperature: 25.0, humidity: 50.0, pressure: 1000.0 });
+    const testMessage = SensorData.create({
+      temperature: 25.0,
+      humidity: 50.0,
+      pressure: 1000.0,
+      magnetometerX: 12.0,
+      magnetometerY: 15.0,
+      magnetometerZ: 22.0,
+      gyroDegX: 45.0,
+      gyroDegY: 44.0,
+      gyroDegZ: 32.0,
+    });
 
     // Serialize the message
     const serializedMessage = SensorData.encode(testMessage).finish();
