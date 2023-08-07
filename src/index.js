@@ -14,7 +14,7 @@ class SensorDataEmitter extends EventEmitter {
   }
 
   start() {
-    protobuf.load(path.join(__dirname, '../proto/sensehat.proto')).then(root => {
+    protobuf.load(path.join(__dirname, 'sensehat.proto')).then(root => {
       const SensorData = root.lookupType("SensorData");
 
       this.sock.on('message', (_topic, data) => {

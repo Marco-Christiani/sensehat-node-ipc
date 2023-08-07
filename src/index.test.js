@@ -4,7 +4,7 @@ const zmq = require('zeromq');
 
 test('Protobuf deserialization', async () => {
   // Load the protobuf schema
-  const root = await protobuf.load(path.join(__dirname, '../proto/sensehat.proto'));
+  const root = await protobuf.load(path.join(__dirname, 'sensehat.proto'));
 
   // Obtain the message type
   const SensorData = root.lookupType('SensorData');
@@ -17,9 +17,9 @@ test('Protobuf deserialization', async () => {
     magnetometerX: 12.0,
     magnetometerY: 15.0,
     magnetometerZ: 22.0,
-    gyroDegX: 45.0,
-    gyroDegY: 44.0,
-    gyroDegZ: 32.0,
+    gyroDegRoll: 45.0,
+    gyroDegPitch: 44.0,
+    gyroDegYaw: 32.0,
   });
 
   // Serialize the message
@@ -34,7 +34,7 @@ test('Protobuf deserialization', async () => {
 
 
 test('ZeroMQ and Protobuf communication', done => {
-  const root = protobuf.loadSync(path.join(__dirname, '../proto/sensehat.proto'));
+  const root = protobuf.loadSync(path.join(__dirname, 'sensehat.proto'));
 
   const SensorData = root.lookupType('SensorData');
 
@@ -61,9 +61,9 @@ test('ZeroMQ and Protobuf communication', done => {
     expect(msg.magnetometerX).toBeCloseTo(12.0);
     expect(msg.magnetometerY).toBeCloseTo(15.0);
     expect(msg.magnetometerZ).toBeCloseTo(22.0);
-    expect(msg.gyroDegX).toBeCloseTo(45.0);
-    expect(msg.gyroDegY).toBeCloseTo(44.0);
-    expect(msg.gyroDegZ).toBeCloseTo(32.0);
+    expect(msg.gyroDegRoll).toBeCloseTo(45.0);
+    expect(msg.gyroDegPitch).toBeCloseTo(44.0);
+    expect(msg.gyroDegYaw).toBeCloseTo(32.0);
 
     // Close the sockets
     subscriber.close();
@@ -83,9 +83,9 @@ test('ZeroMQ and Protobuf communication', done => {
       magnetometerX: 12.0,
       magnetometerY: 15.0,
       magnetometerZ: 22.0,
-      gyroDegX: 45.0,
-      gyroDegY: 44.0,
-      gyroDegZ: 32.0,
+      gyroDegRoll: 45.0,
+      gyroDegPitch: 44.0,
+      gyroDegYaw: 32.0,
     });
 
     // Serialize the message
