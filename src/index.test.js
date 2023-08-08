@@ -1,112 +1,106 @@
-const path = require('path');
-const protobuf = require('protobufjs');
-const zmq = require('zeromq');
+const zmq = require("zeromq");
+const messages = require("./sensehat_pb");
 
-test('Protobuf deserialization', async () => {
-  // Load the protobuf schema
-  const root = await protobuf.load(path.join(__dirname, 'sensehat.proto'));
-
-  // Obtain the message type
-  const SensorData = root.lookupType('SensorData');
-
+test("Protobuf deserialization", () => {
   // Create a test message
-  const testMessage = SensorData.create({
-    temperature: 25.0,
-    humidity: 50.0,
-    pressure: 1000.0,
-    magnetometerX: 12.0,
-    magnetometerY: 15.0,
-    magnetometerZ: 22.0,
-    gyroDegRoll: 45.0,
-    gyroDegPitch: 44.0,
-    gyroDegYaw: 32.0,
-  });
+  const testMessage = new messages.SensorData();
+  testMessage.setTemperature(25.0);
+  testMessage.setHumidity(50.0);
+  testMessage.setPressure(1000.0);
 
-  // Serialize the message
-  const serializedMessage = SensorData.encode(testMessage).finish();
+  testMessage.setMagnetometerx(12.0);
+  testMessage.setMagnetometery(15.0);
+  testMessage.setMagnetometerz(22.0);
 
-  // Deserialize the message
-  const deserializedMessage = SensorData.decode(serializedMessage);
+  testMessage.setAcceldegroll(45.0);
+  testMessage.setAcceldegpitch(44.0);
+  testMessage.setAcceldegyaw(32.0);
 
-  // Check that the deserialized message matches the original message
-  expect(deserializedMessage).toEqual(testMessage);
+  testMessage.setGyrodegroll(45.0);
+  testMessage.setGyrodegpitch(44.0);
+  testMessage.setGyrodegyaw(32.0);
+
+  const serializedMessage = testMessage.serializeBinary();
+
+  const deserializedMessage = messages.SensorData.deserializeBinary(serializedMessage);
+
+  expect(deserializedMessage.toObject()).toEqual(testMessage.toObject());
 });
 
+test("ZeroMQ and Protobuf communication", (done) => {
+  const publisher = zmq.socket("pub");
+  publisher.bindSync("tcp://127.0.0.1:5556");
+  console.log("Publisher bound to port 5556");
 
-test('ZeroMQ and Protobuf communication', done => {
-  const root = protobuf.loadSync(path.join(__dirname, 'sensehat.proto'));
+  const subscriber = zmq.socket("sub");
 
-  const SensorData = root.lookupType('SensorData');
-
-  const publisher = zmq.socket('pub');
-  publisher.bindSync('tcp://127.0.0.1:5556');
-  console.log('Publisher bound to port 5556');
-
-  const subscriber = zmq.socket('sub');
-
-  // Connect the subscriber to the publisher
-  subscriber.connect('tcp://127.0.0.1:5556');
-  subscriber.subscribe('data');
-  console.log('Subscriber connected to port 5556');
+  subscriber.connect("tcp://127.0.0.1:5556");
+  subscriber.subscribe("data");
+  console.log("Subscriber connected to port 5556");
 
   // Wait for the subscriber to receive a message
-  subscriber.on('message', function(topic, message) {
-    // Deserialize the message
-    const msg = SensorData.decode(message);
+  subscriber.on("message", function(_topic, message) {
+    // Convert the Buffer to a Uint8Array and then deserialize
+    const uint8Message = new Uint8Array(message.buffer);
+
+    const msg = messages.SensorData.deserializeBinary(uint8Message);
 
     // Check the message
-    expect(msg.temperature).toBeCloseTo(25.0);
-    expect(msg.humidity).toBeCloseTo(50.0);
-    expect(msg.pressure).toBeCloseTo(1000.0);
-    expect(msg.magnetometerX).toBeCloseTo(12.0);
-    expect(msg.magnetometerY).toBeCloseTo(15.0);
-    expect(msg.magnetometerZ).toBeCloseTo(22.0);
-    expect(msg.gyroDegRoll).toBeCloseTo(45.0);
-    expect(msg.gyroDegPitch).toBeCloseTo(44.0);
-    expect(msg.gyroDegYaw).toBeCloseTo(32.0);
+    expect(msg.getTemperature()).toBeCloseTo(25.1);
+    expect(msg.getHumidity()).toBeCloseTo(51.1);
+    expect(msg.getPressure()).toBeCloseTo(1100.1);
+    expect(msg.getMagnetometerx()).toBeCloseTo(12.1);
+    expect(msg.getMagnetometery()).toBeCloseTo(15.1);
+    expect(msg.getMagnetometerz()).toBeCloseTo(22.1);
+    expect(msg.getGyrodegroll()).toBeCloseTo(45.1);
+    expect(msg.getGyrodegpitch()).toBeCloseTo(44.1);
+    expect(msg.getGyrodegyaw()).toBeCloseTo(32.1);
 
-    // Close the sockets
     subscriber.close();
     publisher.close();
 
-    // End the test
     done();
   });
 
-  // Give the subscriber a moment to connect before the publisher starts sending
   setTimeout(() => {
     // Create a test message
-    const testMessage = SensorData.create({
-      temperature: 25.0,
-      humidity: 50.0,
-      pressure: 1000.0,
-      magnetometerX: 12.0,
-      magnetometerY: 15.0,
-      magnetometerZ: 22.0,
-      gyroDegRoll: 45.0,
-      gyroDegPitch: 44.0,
-      gyroDegYaw: 32.0,
-    });
+    const testMessage = new messages.SensorData();
+    testMessage.setTemperature(25.1);
+    testMessage.setHumidity(51.1);
+    testMessage.setPressure(1100.1);
 
-    // Serialize the message
-    const serializedMessage = SensorData.encode(testMessage).finish();
+    testMessage.setMagnetometerx(12.1);
+    testMessage.setMagnetometery(15.1);
+    testMessage.setMagnetometerz(22.1);
 
-    // Publish the message
-    publisher.send(['data', serializedMessage]);
-  }, 500);
-});
+    testMessage.setAcceldegroll(45.1);
+    testMessage.setAcceldegpitch(44.1);
+    testMessage.setAcceldegyaw(32.1);
 
+    testMessage.setGyrodegroll(45.1);
+    testMessage.setGyrodegpitch(44.1);
+    testMessage.setGyrodegyaw(32.1);
 
-test('Live RPi test @integration', done => {
+    const serializedMessage = testMessage.serializeBinary();
+
+    const bufferMessage = Buffer.from(serializedMessage);
+
+    publisher.send(['data', bufferMessage]);
+  }, 800);
+}, 5000);
+
+test("Live RPi test @integration", () => {
   // filter out this test if not running on rpi!
-  const lib = require('sensehat-node-ipc')
+  const lib = require("sensehat-node-ipc");
 
   const sensorDataEmitter = new lib.SensorDataEmitter();
 
-  sensorDataEmitter.on('data', msg => {
-    console.log(`Temperature: ${msg.temperature}, Humidity: ${msg.humidity}, Pressure: ${msg.pressure}`);
+  sensorDataEmitter.on("data", (msg) => {
+    console.log(
+      `Temperature: ${msg.temperature}, Humidity: ${msg.humidity}, Pressure: ${msg.pressure}`,
+    );
   });
 
   sensorDataEmitter.start();
-  console.log('started');
+  console.log("started");
 });
