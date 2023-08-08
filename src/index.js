@@ -39,11 +39,7 @@ class SensorDataEmitter extends EventEmitter {
   }
 }
 
-const sensorDataEmitter = new SensorDataEmitter();
 
-sensorDataEmitter.on('data', msg => {
-  console.log(`Temperature: ${msg.temperature}, Humidity: ${msg.humidity}, Pressure: ${msg.pressure}`);
-});
-
-sensorDataEmitter.start();
-console.log('started');
+module.exports = {
+  SensorDataEmitter
+}

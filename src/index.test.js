@@ -95,3 +95,18 @@ test('ZeroMQ and Protobuf communication', done => {
     publisher.send(['data', serializedMessage]);
   }, 500);
 });
+
+
+test('Live RPi test @integration', done => {
+  // filter out this test if not running on rpi!
+  const lib = require('sensehat-node-ipc')
+
+  const sensorDataEmitter = new lib.SensorDataEmitter();
+
+  sensorDataEmitter.on('data', msg => {
+    console.log(`Temperature: ${msg.temperature}, Humidity: ${msg.humidity}, Pressure: ${msg.pressure}`);
+  });
+
+  sensorDataEmitter.start();
+  console.log('started');
+});
