@@ -19,5 +19,5 @@ jobs:
         node-version: '18'
 
     - run: npm ci
-    - run: npm clean-build
+    - run: npm run clean-build
     - run: npm test
