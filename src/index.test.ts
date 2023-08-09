@@ -1,9 +1,10 @@
-const zmq = require("zeromq");
-const messages = require("./sensehat_pb");
+import { socket } from "zeromq";
+import { SensorData } from "../proto/sensehat_pb";
+import { SensorDataEmitter } from "../../sensehat-node-ipc";
 
-test("Protobuf deserialization", () => {
+test("Protobuf deserialization @unittest", () => {
   // Create a test message
-  const testMessage = new messages.SensorData();
+  const testMessage = new SensorData();
   testMessage.setTemperature(25.0);
   testMessage.setHumidity(50.0);
   testMessage.setPressure(1000.0);
@@ -22,17 +23,17 @@ test("Protobuf deserialization", () => {
 
   const serializedMessage = testMessage.serializeBinary();
 
-  const deserializedMessage = messages.SensorData.deserializeBinary(serializedMessage);
+  const deserializedMessage = SensorData.deserializeBinary(serializedMessage);
 
   expect(deserializedMessage.toObject()).toEqual(testMessage.toObject());
 });
 
-test("ZeroMQ and Protobuf communication", (done) => {
-  const publisher = zmq.socket("pub");
+test("ZeroMQ and Protobuf communication @unittest", (done) => {
+  const publisher = socket("pub");
   publisher.bindSync("tcp://127.0.0.1:5556");
   console.log("Publisher bound to port 5556");
 
-  const subscriber = zmq.socket("sub");
+  const subscriber = socket("sub");
 
   subscriber.connect("tcp://127.0.0.1:5556");
   subscriber.subscribe("data");
@@ -43,7 +44,7 @@ test("ZeroMQ and Protobuf communication", (done) => {
     // Convert the Buffer to a Uint8Array and then deserialize
     const uint8Message = new Uint8Array(message.buffer);
 
-    const msg = messages.SensorData.deserializeBinary(uint8Message);
+    const msg = SensorData.deserializeBinary(uint8Message);
 
     // Check the message
     expect(msg.getTemperature()).toBeCloseTo(25.1);
@@ -64,7 +65,7 @@ test("ZeroMQ and Protobuf communication", (done) => {
 
   setTimeout(() => {
     // Create a test message
-    const testMessage = new messages.SensorData();
+    const testMessage = new SensorData();
     testMessage.setTemperature(25.1);
     testMessage.setHumidity(51.1);
     testMessage.setPressure(1100.1);
@@ -89,16 +90,15 @@ test("ZeroMQ and Protobuf communication", (done) => {
   }, 800);
 }, 5000);
 
-test("Live RPi test @integration", () => {
+test("Live RPi test @integration", (done) => {
   // filter out this test if not running on rpi!
-  const lib = require("sensehat-node-ipc");
+  const sensorDataEmitter = new SensorDataEmitter();
 
-  const sensorDataEmitter = new lib.SensorDataEmitter();
-
-  sensorDataEmitter.on("data", (msg) => {
+  sensorDataEmitter.on("data", (msg: SensorData.AsObject) => {
     console.log(
       `Temperature: ${msg.temperature}, Humidity: ${msg.humidity}, Pressure: ${msg.pressure}`,
     );
+    done();
   });
 
   sensorDataEmitter.start();

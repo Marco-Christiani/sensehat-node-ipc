@@ -1,4 +1,4 @@
-import sensehat_pb2
+import proto.sensehat_pb2 as sensehat_pb2
 import zmq
 from sense_hat import SenseHat
 import time
