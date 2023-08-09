@@ -1,6 +1,6 @@
 import { socket } from "zeromq";
 import { SensorData } from "../proto/sensehat_pb";
-import { SensorDataEmitter } from "../../sensehat-node-ipc";
+import { SensorDataEmitter } from "./index";
 
 test("Protobuf deserialization @unittest", () => {
   // Create a test message
