@@ -1,7 +1,22 @@
-import proto.sensehat_pb2 as sensehat_pb2
+import importlib.util
+import os
+import time
+
 import zmq
 from sense_hat import SenseHat
-import time
+
+spec = importlib.util.spec_from_file_location("proto", os.path.join(
+    os.path.dirname(__file__), '../proto/sensehat_pb2.py'))
+
+if (not spec) or (not spec.loader):
+    raise ImportError('Unable to import proto. Was project structure changed?')
+
+sensehat_pb2 = importlib.util.module_from_spec(spec)
+
+if not sensehat_pb2:
+    raise ImportError('Unable to import module from proto. Was project structure changed?')
+
+spec.loader.exec_module(sensehat_pb2)
 
 
 sense = SenseHat()

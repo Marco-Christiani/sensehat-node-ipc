@@ -98,6 +98,7 @@ test("Live RPi test @integration", (done) => {
     console.log(
       `Temperature: ${msg.temperature}, Humidity: ${msg.humidity}, Pressure: ${msg.pressure}`,
     );
+    sensorDataEmitter.stop();
     done();
   });
 

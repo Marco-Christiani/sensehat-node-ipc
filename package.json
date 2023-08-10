@@ -10,9 +10,9 @@
     "clean": "rimraf dist/*",
     "build": "tsc",
     "clean-build": "npm run clean && npm run build",
-    "start": "node dist/index.js",
-    "test": "jest --testNamePattern \"^(?!.*@integration)\"",
-    "test-all": "jest"
+    "test": "jest",
+    "test:unit": "jest --testNamePattern \"^(?!.*@integration)\"",
+    "test:integration": "jest --testNamePattern \"@integration\""
   },
   "jest": {
     "preset": "ts-jest",

@@ -13,12 +13,13 @@ class SensorDataEmitter extends EventEmitter {
     super();
     this.sock = socket("sub");
     this.sock.connect("tcp://127.0.0.1:5556");
-    this.sock.subscribe("data");
+    this.sock.subscribe("");
   }
 
   public start(): void {
     this.sock.on("message", (data: any) => {
-      const msg: SensorData = SensorData.deserializeBinary(data);
+      const uint8Message = new Uint8Array(data.buffer);
+      const msg: SensorData = SensorData.deserializeBinary(uint8Message);
       const msgObj: SensorData.AsObject = msg.toObject();
       this.emit("data", msgObj);
     });
